@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
-    const QUrl url(u"qrc:/twitterak/Main.qml"_qs);
+    const QUrl url(u"qrc:/twitterak/qml/Main.qml"_qs);
 
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreationFailed,
         &app, []() { QCoreApplication::exit(-1); },
