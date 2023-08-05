@@ -9,13 +9,21 @@ find_package(Qt6 6.4 REQUIRED COMPONENTS Quick)
 qt_standard_project_setup()
 
 qt_add_executable(apptwitterak
-    main.cpp
+    src/main.cpp
 )
 
 qt_add_qml_module(apptwitterak
     URI twitterak
     VERSION 1.0
-    QML_FILES Main.qml
+    QML_FILES
+    qml/Main.qml
+    qml/pages/LoginPage.qml
+    qml/components/FlatButton.qml
+    qml/components/CustomTextField.qml
+    qml/components/TextButton.qml
+    RESOURCES
+    twitterak.qrc
+    img/Logo_of_Twitter.svg
 )
 
 
