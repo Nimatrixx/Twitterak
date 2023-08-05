@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/Main.qml</file>
+        <file>qml/pages/LoginPage.qml</file>
+        <file>qml/components/FlatButton.qml</file>
+        <file>qml/components/TextButton.qml</file>
+        <file>img/Logo_of_Twitter.svg</file>
+    </qresource>
+</RCC>
