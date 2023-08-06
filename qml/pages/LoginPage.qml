@@ -59,14 +59,18 @@ Item{
 
             CustomTextField{
                 id: usernameField
+                maximumLength: 18
                 anchors.horizontalCenter: parent.horizontalCenter
+                onTextChanged:text = text.replace(/\s+/g,'')
                 placeholderText: "Username"
             }
 
             CustomTextField{
                 id: passwordField
+                maximumLength: 18
                 echoMode: TextInput.Password
                 anchors.horizontalCenter: parent.horizontalCenter
+                onTextChanged:text = text.replace(/\s+/g,'')
                 placeholderText: "Password"
             }
 

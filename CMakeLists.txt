@@ -15,15 +15,34 @@ qt_add_executable(apptwitterak
 qt_add_qml_module(apptwitterak
     URI twitterak
     VERSION 1.0
+
     QML_FILES
     qml/Main.qml
     qml/pages/LoginPage.qml
     qml/components/FlatButton.qml
     qml/components/CustomTextField.qml
     qml/components/TextButton.qml
+
     RESOURCES
     twitterak.qrc
     img/Logo_of_Twitter.svg
+
+    SOURCES
+    src/Date.cpp
+    src/UserKey.cpp
+    src/User.cpp
+    src/PersonalUser.cpp
+    src/AnonymousUser.cpp
+    src/OrganisationUser.cpp
+    src/twitterakbackend.cpp
+
+    include/Date.h
+    include/UserKey.h
+    include/User.h
+    include/PersonalUser.h
+    include/AnonymousUser.h
+    include/OrganisationUser.h
+    include/twitterakbackend.h
 )
 
 
