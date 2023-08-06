@@ -97,15 +97,17 @@ Item{
                 label: "Login"
                 backgroundRadius: 10
                 onClicked:{
-                    if(backend.signUpFirstRound(usernameField, passwordField, username_warn, password_warn))
+                    if(backend.loginBtn(usernameField, passwordField, username_warn, password_warn))
                     {
-                        //push second round of sign up
+                        //open twitterak
                     }
                 }
             }
 
             TextButton{
                 textContent: "Don't have an account? Sign up here"
+                fontPixelSize: 12
+                onClicked: stack.push(signupPage)
             }
         }
     }

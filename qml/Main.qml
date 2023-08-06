@@ -21,7 +21,19 @@ Window {
         anchors.fill:parent
     }
 
-    Pages.LoginPage{
+    Component{
         id:loginPage
+        Pages.LoginPage{
+
+        }
     }
+
+    Component{
+        id:signupPage
+        Pages.SignupPage{
+
+        }
+    }
+
+
 }

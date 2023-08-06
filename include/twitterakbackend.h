@@ -14,7 +14,7 @@ public:
 
 public slots:
     bool signUpFirstRound(QObject* username, QObject* password, QObject* usernameWarn, QObject* passwordWarn);
-
+    bool loginBtn(QObject* usernameField, QObject* passwordField, QObject* usernameWarn, QObject* passwordWarn);
 signals:
 
 private:

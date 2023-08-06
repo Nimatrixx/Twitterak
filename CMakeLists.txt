@@ -22,6 +22,7 @@ qt_add_qml_module(apptwitterak
     qml/components/FlatButton.qml
     qml/components/CustomTextField.qml
     qml/components/TextButton.qml
+    qml/pages/SignupPage.qml
 
     RESOURCES
     twitterak.qrc

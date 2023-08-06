@@ -5,5 +5,6 @@
         <file>qml/components/FlatButton.qml</file>
         <file>qml/components/TextButton.qml</file>
         <file>img/Logo_of_Twitter.svg</file>
+        <file>qml/pages/SignupPage.qml</file>
     </qresource>
 </RCC>

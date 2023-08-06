@@ -20,6 +20,7 @@ Button {
             color: textColor
             text: label
             font.weight: fontWeight
+            font.pixelSize: fontPixelSize
         }
     }
 }

@@ -41,3 +41,10 @@ bool TwitterakBackend::signUpFirstRound(QObject* username, QObject* password, QO
 
     return successfullySignup;
 }
+
+
+
+bool TwitterakBackend::loginBtn(QObject* usernameField, QObject* passwordField, QObject* usernameWarn, QObject* passwordWarn)
+{
+    return 1;
+}
