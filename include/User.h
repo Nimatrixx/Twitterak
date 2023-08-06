@@ -9,6 +9,7 @@
 class User
 {   
 public:
+    User();
     User(std::string);
     std::string get_id() const;
     void set_username(std::string);

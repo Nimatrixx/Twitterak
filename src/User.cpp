@@ -1,10 +1,14 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include "User.h"
-#include "UserKey.h"
-#include "Date.h"
+#include "../include/User.h"
+#include "../include/UserKey.h"
+#include "../include/Date.h"
 using namespace std;
+
+User::User(){}
+
+User::User(string newId): id(newId){}
 
 string User::get_id() const
 {
@@ -119,7 +123,7 @@ string User::get_phoneNumber() const {
     return phoneNumber;
 }
 
-virtual void User::set_bio(string bio){
+void User::set_bio(string bio){
     if (bio.size()<160){
         this -> bio = bio;
     }

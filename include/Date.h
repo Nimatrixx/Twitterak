@@ -5,7 +5,7 @@
 class Date{
 
     public:
-
+    Date();
     Date(unsigned year, unsigned month, unsigned day);
 
     void setYear(unsigned year);
