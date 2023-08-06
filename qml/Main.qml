@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Window
 import QtQuick.Controls
 import "pages" as Pages
+import Backend
 
 Window {
     width: 800
@@ -9,6 +10,10 @@ Window {
     visible: true
     title: qsTr("Twitterak")
     color: "#ffffff"
+
+    Backend{
+        id:backend
+    }
 
     StackView{
         id: stack
@@ -19,5 +24,4 @@ Window {
     Pages.LoginPage{
         id:loginPage
     }
-
 }

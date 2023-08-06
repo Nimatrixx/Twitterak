@@ -65,6 +65,13 @@ Item{
                 placeholderText: "Username"
             }
 
+            Text{
+                id:username_warn
+                visible: true
+                color: "#ff0000"
+                font.pointSize: 8
+            }
+
             CustomTextField{
                 id: passwordField
                 maximumLength: 18
@@ -72,6 +79,13 @@ Item{
                 anchors.horizontalCenter: parent.horizontalCenter
                 onTextChanged:text = text.replace(/\s+/g,'')
                 placeholderText: "Password"
+            }
+
+            Text{
+                id: password_warn
+                visible: true
+                color: "#ff0000"
+                font.pointSize: 8
             }
 
             FlatButton{
@@ -82,6 +96,12 @@ Item{
                 height: 40
                 label: "Login"
                 backgroundRadius: 10
+                onClicked:{
+                    if(backend.signUpFirstRound(usernameField, passwordField, username_warn, password_warn))
+                    {
+                        //push second round of sign up
+                    }
+                }
             }
 
             TextButton{
