@@ -10,6 +10,11 @@ User::User(){}
 
 User::User(string newId): id(newId){}
 
+void User::set_id(string id)
+{
+    this->id = id;
+}
+
 string User::get_id() const
 {
     return id;
@@ -47,11 +52,10 @@ void User::set_username(string newUsername)
     ifstream file ("userkeys.txt", ios::out | ios::binary);
     if(file)
     {
-        UserKey key("","");
         while(!file.eof())
         {
-            string r_id , r_username;
-            file >> r_id >> r_username;
+            string r_id , r_username, r_password;
+            file >> r_id >> r_username >> r_password;
             if(r_username == newUsername)
             {
                 throw invalid_argument ("* Username is already taken.");
@@ -171,6 +175,16 @@ Date User::get_dateOfBirth() const{
     return birthDate;
 }
 
+void User::set_followers(vector<string> vec)
+{
+    followers = vec;
+}
+
+void User::set_followings(vector<string> vec)
+{
+    followings = vec;
+}
+
 vector<string> User::get_followers() const
 {
     return followers;
@@ -204,6 +218,34 @@ bool User::unfollow(string userId)
             return 1;
         }
             
+    }
+
+    return 0;
+}
+
+bool User::followed(string followerId)
+{
+    for(size_t i{0}; i < followers.size(); i++)
+    {
+        if(followers[i] == followerId)
+            return 0;
+    }
+
+    followers.push_back(followerId);
+
+    return 1;
+}
+
+bool User::unfollowed(string followerId)
+{
+    for(size_t i{0}; i < followers.size(); i++)
+    {
+        if(followers[i] == followerId)
+        {
+            followers.erase(followers.begin() + i);
+            return 1;
+        }
+
     }
 
     return 0;

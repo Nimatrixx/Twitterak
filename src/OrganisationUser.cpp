@@ -3,7 +3,7 @@
 #include <iostream>
 using namespace std;
 
-OrganisationUser::OrganisationUser(std::string id):User(id){}
+OrganisationUser::OrganisationUser():User(){}
 
 void OrganisationUser::set_bio(string newBio){
     if (newBio.size()<1100){

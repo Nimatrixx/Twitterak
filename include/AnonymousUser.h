@@ -5,7 +5,8 @@
 
 class AnonymousUser : public User
 {
-    AnonymousUser(std::string);
+public:
+    AnonymousUser();
 };
 
 #endif

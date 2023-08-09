@@ -11,6 +11,7 @@ class User
 public:
     User();
     User(std::string);
+    void set_id(std::string);
     std::string get_id() const;
     void set_username(std::string);
     std::string get_username() const;
@@ -28,10 +29,14 @@ public:
     std::string get_link () const;
     void set_dateOfBirth(Date);
     Date get_dateOfBirth() const;
+    void set_followings(std::vector<std::string>);
+    void set_followers(std::vector<std::string>);
     std::vector<std::string> get_followers() const;
     std::vector<std::string> get_followings() const;
     bool follow(std::string);
     bool unfollow(std::string);
+    bool followed(std::string);
+    bool unfollowed(std::string);
 
 protected:
     std::string bio;

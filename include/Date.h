@@ -18,9 +18,9 @@ class Date{
 
     private:
 
-    unsigned m_year = 1900;
-    unsigned m_month = 1;
-    unsigned m_day = 1;
+    unsigned m_year{0};
+    unsigned m_month{0};
+    unsigned m_day{0};
 };
 
 #endif

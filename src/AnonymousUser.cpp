@@ -2,7 +2,7 @@
 #include <iostream>
 using namespace std;
 
-AnonymousUser::AnonymousUser(std::string id): User(id)
+AnonymousUser::AnonymousUser(): User()
 {
     set_name("Anonymous User");
 }

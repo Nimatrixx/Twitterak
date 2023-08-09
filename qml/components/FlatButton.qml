@@ -7,11 +7,12 @@ Button {
     property string label: "button"
     property color textColor: "#ffffff"
     property int fontWeight: Font.Bold
-    property int backgroundRadius: 0
+    property int backgroundRadius: 5
 
     background: Rectangle {
         id: button_background
-        width: parent.width; height: parent.height
+        width: parent.width
+        height: parent.height
         color: pressed ? Qt.darker(backgoundColor,1.2) : backgoundColor
         radius: backgroundRadius
         Text{

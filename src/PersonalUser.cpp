@@ -1,16 +1,15 @@
 #include "../include/PersonalUser.h"
 
 #include <iostream>
-using namespace std;
 
-PersonalUser::PersonalUser(string id): User(id) {}
+PersonalUser::PersonalUser(): User() {}
 
-void PersonalUser::set_office(string officeId)
+void PersonalUser::set_office(std::string officeId)
 {
     office = officeId;
 }
 
-string PersonalUser::get_office() const
+std::string PersonalUser::get_office() const
 {
     return office;
 }

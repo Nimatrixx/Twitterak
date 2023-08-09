@@ -8,7 +8,7 @@
 class PersonalUser : public User
 {
 public:
-    PersonalUser(std::string);
+    PersonalUser();
     void set_office(std::string);
     std::string get_office() const;
 private:

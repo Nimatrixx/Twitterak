@@ -11,7 +11,7 @@ Item{
         width: 350
         height: 500
         color: "#379bed"
-        radius: 30
+        radius: 15
 
         Text{
             anchors.centerIn: parent
@@ -30,7 +30,7 @@ Item{
         width: 350
         height: 500
         color: "#ededed"
-        radius: 30
+        radius: 15
 
         Column{
             anchors.centerIn: parent
@@ -95,11 +95,11 @@ Item{
                 width: 220
                 height: 40
                 label: "Login"
-                backgroundRadius: 10
                 onClicked:{
                     if(backend.loginBtn(usernameField, passwordField, username_warn, password_warn))
                     {
                         //open twitterak
+                        stack.push(mainPage)
                     }
                 }
             }

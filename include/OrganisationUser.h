@@ -7,7 +7,7 @@
 class OrganisationUser : public User
 {
 public:
-    OrganisationUser(std::string);
+    OrganisationUser();
     void set_bio(std::string);
     void set_CEO(std::string);
     std::string get_CEO() const;

@@ -6,7 +6,7 @@ import Backend
 
 Window {
     width: 800
-    height: 600
+    height: 601
     visible: true
     title: qsTr("Twitterak")
     color: "#ffffff"
@@ -35,5 +35,10 @@ Window {
         }
     }
 
+    Component{
+        id:mainPage
+        Pages.MainPage{
 
+        }
+    }
 }

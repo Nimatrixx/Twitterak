@@ -24,6 +24,7 @@ qt_add_qml_module(apptwitterak
     qml/components/TextButton.qml
     qml/pages/SignupPage.qml
 
+
     RESOURCES
     twitterak.qrc
     img/Logo_of_Twitter.svg
@@ -44,6 +45,7 @@ qt_add_qml_module(apptwitterak
     include/AnonymousUser.h
     include/OrganisationUser.h
     include/twitterakbackend.h
+    QML_FILES qml/pages/MainPage.qml
 )
 
 
