@@ -35,13 +35,14 @@ void Date::setMonth(unsigned month)
     unsigned currentYear = aTime->tm_year + 1900;
     unsigned currentMonth = aTime->tm_mon + 1;
 
-    if(m_year < currentYear && !(month >= 1 && month <= 12) )
+    if(m_year < currentYear)
     {
-        throw std::invalid_argument("month is invalid");
+        if(month < 1 || 12 < month)
+            throw std::invalid_argument("* month is invalid");
     }
     else if(!(month >= 1 && month <= currentMonth))
     {
-        throw std::invalid_argument("month is invalid");
+        throw std::invalid_argument("* month is invalid");
     }
     m_month = month;
 }
