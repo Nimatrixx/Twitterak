@@ -41,8 +41,8 @@ Item{
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: 128
                 height: 128
-                fillMode: Image.PreserveAspectFit
                 source: "../../img/Logo_of_Twitter.svg"
+                fillMode: Image.PreserveAspectFit
             }
 
             Text {
@@ -96,6 +96,7 @@ Item{
                 height: 40
                 label: "Login"
                 onClicked:{
+
                     if(backend.loginBtn(usernameField, passwordField, username_warn, password_warn))
                     {
                         //open twitterak
@@ -105,7 +106,7 @@ Item{
             }
 
             TextButton{
-                textContent: "Don't have an account? Sign up here"
+                label: "Don't have an account? Sign up here"
                 fontPixelSize: 12
                 onClicked: stack.push(signupPage)
             }

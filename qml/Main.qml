@@ -24,7 +24,6 @@ Window {
     Component{
         id:loginPage
         Pages.LoginPage{
-
         }
     }
 
@@ -38,6 +37,13 @@ Window {
     Component{
         id:mainPage
         Pages.MainPage{
+
+        }
+    }
+
+    Component{
+        id:profilePage
+        Pages.ProfilePage{
 
         }
     }

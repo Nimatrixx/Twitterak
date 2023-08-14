@@ -23,11 +23,21 @@ qt_add_qml_module(apptwitterak
     qml/components/CustomTextField.qml
     qml/components/TextButton.qml
     qml/pages/SignupPage.qml
-
+    qml/pages/MainPage.qml
+    qml/pages/ProfilePage.qml
 
     RESOURCES
     twitterak.qrc
     img/Logo_of_Twitter.svg
+    img/arrow_icon.png
+    img/avatar1.png
+    img/avatar2.png
+    img/avatar3.png
+    img/avatar4.png
+    img/avatar5.png
+    img/avatar6.png
+
+    RESOURCE_PREFIX "/"
 
     SOURCES
     src/Date.cpp
@@ -45,7 +55,7 @@ qt_add_qml_module(apptwitterak
     include/AnonymousUser.h
     include/OrganisationUser.h
     include/twitterakbackend.h
-    QML_FILES qml/pages/MainPage.qml
+
 )
 
 

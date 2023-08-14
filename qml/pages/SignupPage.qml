@@ -377,6 +377,8 @@ Item {
                     visible: false
                 }
 
+
+
                 FlatButton{
                     id: signupButton
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -394,7 +396,7 @@ Item {
                             nameSignupField.error = false
                             phoneSignupField.error = false
 
-                            if(backend.signup(
+                            if(backend.saveUser(
                                 type,
                                 nameSignupField,
                                 phoneSignupField,
@@ -437,7 +439,7 @@ Item {
         anchors.topMargin: 20
         anchors.leftMargin: 20
         fontPixelSize: 15
-        textContent: "Back"
+        label: "Back"
         textColor: "#757575"
         onClicked: if(signupStack.currentPage == 0) stack.pop(); else {signupStack.currentPage--; signupStack.pop();}
     }

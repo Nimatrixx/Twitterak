@@ -47,25 +47,7 @@ void User::set_username(string newUsername)
     || newUsername =="country" || newUsername == "birthdate" || newUsername == "account" || newUsername == "tweets"){
         throw invalid_argument ("* This is a reserved word. You can not choose it as your username.");
     }
-
-    //check repeatation of username
-    ifstream file ("userkeys.txt", ios::out | ios::binary);
-    if(file)
-    {
-        while(!file.eof())
-        {
-            string r_id , r_username, r_password;
-            file >> r_id >> r_username >> r_password;
-            if(r_username == newUsername)
-            {
-                throw invalid_argument ("* Username is already taken.");
-            }
-        }
-    }
-    file.close();
     
-
-
     username = newUsername;
 } 
 
@@ -173,6 +155,26 @@ void User::set_dateOfBirth(Date date){
 
 Date User::get_dateOfBirth() const{
     return birthDate;
+}
+
+void User::set_profilePicture(string address)
+{
+    profilePicture = address;
+}
+
+string User::get_profilePicture() const
+{
+    return profilePicture;
+}
+
+void User::set_header(string newHeader)
+{
+    header = newHeader;
+}
+
+string User::get_header() const
+{
+    return header;
 }
 
 void User::set_followers(vector<string> vec)

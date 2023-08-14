@@ -6,5 +6,12 @@
         <file>qml/components/TextButton.qml</file>
         <file>img/Logo_of_Twitter.svg</file>
         <file>qml/pages/SignupPage.qml</file>
+        <file>img/arrow_icon.png</file>
+        <file>img/avatar1.png</file>
+        <file>img/avatar2.png</file>
+        <file>img/avatar3.png</file>
+        <file>img/avatar4.png</file>
+        <file>img/avatar5.png</file>
+        <file>img/avatar6.png</file>
     </qresource>
 </RCC>

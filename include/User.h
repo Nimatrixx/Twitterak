@@ -12,31 +12,38 @@ public:
     User();
     User(std::string);
     void set_id(std::string);
-    std::string get_id() const;
     void set_username(std::string);
-    std::string get_username() const;
     void set_password(std::string);
-    std::string get_password() const;
     void set_name(std::string);
-    std::string get_name() const;
     void set_phoneNumber(std::string);
-    std::string get_phoneNumber() const;
     virtual void set_bio(std::string);
-    std::string get_bio() const;
     void set_country (std::string);
-    std::string get_country () const;
     void set_link (std::string);
-    std::string get_link () const;
     void set_dateOfBirth(Date);
-    Date get_dateOfBirth() const;
     void set_followings(std::vector<std::string>);
     void set_followers(std::vector<std::string>);
+    void set_profilePicture(std::string);
+    void set_header(std::string);
+
+    std::string get_username() const;
+    std::string get_password() const;
+    std::string get_name() const;
+    std::string get_phoneNumber() const;
+    std::string get_bio() const;
+    std::string get_country () const;
+    std::string get_link () const;
+    Date get_dateOfBirth() const;
+    std::string get_id() const;
     std::vector<std::string> get_followers() const;
     std::vector<std::string> get_followings() const;
+    std::string get_profilePicture() const;
+    std::string get_header() const;
+
     bool follow(std::string);
     bool unfollow(std::string);
     bool followed(std::string);
     bool unfollowed(std::string);
+
 
 protected:
     std::string bio;
@@ -53,6 +60,8 @@ private:
     std::string link;
     Date birthDate;
 
+    std::string profilePicture;
+    std::string header;
     std::vector<std::string> followers;
     std::vector<std::string> followings;
 };
