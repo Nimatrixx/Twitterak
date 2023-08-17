@@ -104,3 +104,10 @@ unsigned Date::getDay() const
 {
     return m_day;
 }
+
+void Date::clear()
+{
+    m_year = 0;
+    m_month = 0;
+    m_day = 0;
+}

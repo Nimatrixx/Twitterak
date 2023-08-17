@@ -16,6 +16,8 @@ class Date{
     unsigned getMonth() const;
     unsigned getDay() const;
 
+    void clear();
+
     private:
 
     unsigned m_year{0};
