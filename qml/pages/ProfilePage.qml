@@ -4,9 +4,12 @@ import "../components"
 
 Item {
     Rectangle{
-        width: parent.width
-        height: parent.height
+        anchors.fill: parent
         color: "#e8ecef"
+
+        Component.onCompleted: {
+            backend.loadTweets(tweetsModel, backend.get_temp_id());
+        }
 
 
         Rectangle{
@@ -21,7 +24,7 @@ Item {
                 height: 30
                 anchors.centerIn: parent
                 color: "#000000"
-                text: "Profile"
+                text: backend.get_temp_username()
                 font.pixelSize: 25
                 horizontalAlignment: Text.AlignHCenter
             }
@@ -51,7 +54,7 @@ Item {
 
             Rectangle{
                 width: parent.width - 50
-                height: column.height
+                height: column.height - tweetsList.height - spacer.height
                 anchors.horizontalCenter: parent.horizontalCenter
                 radius: 10
 
@@ -63,7 +66,8 @@ Item {
                         height: 150
                         width: parent.width - 40
                         anchors.horizontalCenter: parent.horizontalCenter
-                        color: "#000000"
+                        color: backend.get_temp_header()
+                        radius: 10
 
                         Image{
                             width: 140
@@ -72,10 +76,12 @@ Item {
                             anchors.top: parent.top
                             anchors.leftMargin: 20
                             anchors.topMargin: 70
-                            source: "qrc:/qtquickplugin/images/template_image.png"
+                            source: backend.get_temp_profilePicture()
                         }
 
                         FlatButton{
+                            property bool isFollowed: backend.isFollowed(backend.get_temp_id())
+
                             width: 120
                             height: 40
                             anchors.right: parent.right
@@ -83,10 +89,22 @@ Item {
                             anchors.rightMargin: 20
                             anchors.topMargin: 160
                             backgroundRadius: 20
-                            label: "Follow"
+                            backgoundColor: isFollowed ? "#2f7fff" : "transparent"
+                            borderWidth: isFollowed ? 0 : 2
+                            label: isFollowed ? "Unfollow" : "Follow"
+                            textColor: isFollowed ? "#ffffff" : "#2f7fff"
+                            onClicked: {
+                                if(isFollowed)
+                                   backend.unfollow(backend.get_temp_id());
+                                else
+                                    backend.follow(backend.get_temp_id());
+
+                                isFollowed = !isFollowed
+
+                            }
                         }
                     }
-                    
+
                     Text{
                         text: backend.get_temp_name()
                         font.pixelSize: 20
@@ -94,7 +112,7 @@ Item {
                     }
 
                     Text{
-                        text: backend.get_temp_username()
+                        text: "@" + backend.get_temp_username()
                         font.pixelSize: 15
                         topPadding: 10
                         color: "#626262"
@@ -121,6 +139,7 @@ Item {
                     }
 
                     Row{
+                        bottomPadding: 30
                         Text{
                             text: backend.get_temp_followers()
                             topPadding: 20
@@ -134,7 +153,7 @@ Item {
                             color: "#3a3a3a"
                         }
                         Text{
-                            text: qsTr("   " + backend.get_temp_followings().toString())
+                            text: backend.get_temp_followings()
                             topPadding: 20
                             font.pixelSize: 15
                             color: "#000000"
@@ -146,6 +165,36 @@ Item {
                             color: "#3a3a3a"
                         }
                     }
+
+                    Rectangle{
+                        id: spacer
+                        width: parent.width
+                        height: 50
+                        color: "transparent"
+                    }
+
+
+
+                    ListModel{
+                        id: tweetsModel
+                        function addElement(value: string){
+                            append({txt: value, name: backend.get_temp_name(), profilePicture: backend.get_temp_profilePicture()});
+                        }
+                    }
+
+                    ListView{
+                        id: tweetsList
+                        width: parent.width
+                        height: contentHeight
+                        orientation: ListView.Vertical
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        spacing: 20
+                        model: tweetsModel
+                        delegate: TweetCard{
+
+                        }
+                    }
+
                 }
             }
         }

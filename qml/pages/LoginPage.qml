@@ -97,7 +97,7 @@ Item{
                 label: "Login"
                 onClicked:{
 
-                    if(backend.loginBtn(usernameField, passwordField, username_warn, password_warn))
+                    if(backend.login(usernameField, passwordField, username_warn, password_warn))
                     {
                         //open twitterak
                         stack.push(mainPage)

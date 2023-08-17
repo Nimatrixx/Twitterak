@@ -62,49 +62,49 @@ QString TwitterakBackend::get_header() const{
 
 
 QString TwitterakBackend::get_temp_username() const{
-    return QString::fromStdString(tempUser.get_username());
+    return QString::fromStdString(tempUser->get_username());
 }
 QString TwitterakBackend::get_temp_password() const{
-    return QString::fromStdString(tempUser.get_password());
+    return QString::fromStdString(tempUser->get_password());
 }
 QString TwitterakBackend::get_temp_name() const{
-    return QString::fromStdString(tempUser.get_name());
+    return QString::fromStdString(tempUser->get_name());
 }
 QString TwitterakBackend::get_temp_phoneNumber() const{
-    return QString::fromStdString(tempUser.get_phoneNumber());
+    return QString::fromStdString(tempUser->get_phoneNumber());
 }
 QString TwitterakBackend::get_temp_bio() const{
-    return QString::fromStdString(tempUser.get_bio());
+    return QString::fromStdString(tempUser->get_bio());
 }
 QString TwitterakBackend::get_temp_country() const{
-    return QString::fromStdString(tempUser.get_country());
+    return QString::fromStdString(tempUser->get_country());
 }
 QString TwitterakBackend::get_temp_link() const{
-    return QString::fromStdString(tempUser.get_link());
+    return QString::fromStdString(tempUser->get_link());
 }
 int TwitterakBackend::get_temp_dayOfBirth() const{
-    return tempUser.get_dateOfBirth().getDay();
+    return tempUser->get_dateOfBirth().getDay();
 }
 int TwitterakBackend::get_temp_monthOfBirth() const{
-    return tempUser.get_dateOfBirth().getMonth();
+    return tempUser->get_dateOfBirth().getMonth();
 }
 int TwitterakBackend::get_temp_yearOfBirth() const{
-    return tempUser.get_dateOfBirth().getYear();
+    return tempUser->get_dateOfBirth().getYear();
 }
 QString TwitterakBackend::get_temp_id() const{
-    return QString::fromStdString(tempUser.get_id());
+    return QString::fromStdString(tempUser->get_id());
 }
 int TwitterakBackend::get_temp_followers() const{
-    return tempUser.get_followers().size();
+    return tempUser->get_followers().size();
 }
 int TwitterakBackend::get_temp_followings() const{
-    return tempUser.get_followings().size();
+    return tempUser->get_followings().size();
 }
 QString TwitterakBackend::get_temp_profilePicture() const{
-    return QString::fromStdString(tempUser.get_profilePicture());
+    return QString::fromStdString(tempUser->get_profilePicture());
 }
 QString TwitterakBackend::get_temp_header() const{
-    return QString::fromStdString(tempUser.get_header());
+    return QString::fromStdString(tempUser->get_header());
 }
 
 
@@ -120,7 +120,7 @@ void TwitterakBackend::addKeywordToUserHistory(string word)
 }
 
 
-bool TwitterakBackend::signUpFirstStep(int type, QObject* username, QObject* password, QObject* usernameWarn, QObject* passwordWarn)
+bool TwitterakBackend::setMainInfo(int type, QObject* username, QObject* password, QObject* usernameWarn, QObject* passwordWarn)
 {
     if(type == 0)
         user = &a_user;
@@ -221,7 +221,7 @@ bool TwitterakBackend::signUpFirstStep(int type, QObject* username, QObject* pas
     return successfullySignup;
 }
 
-bool TwitterakBackend::saveUser(int type, QObject* name, QObject* phone,QObject* country,QObject* year,QObject* month,QObject* day,QObject* bio,QObject* link,QObject* custom,QObject* warn)
+bool TwitterakBackend::setSecondaryInfo(int type, QObject* name, QObject* phone,QObject* country,QObject* year,QObject* month,QObject* day,QObject* bio,QObject* link,QObject* custom,QObject* warn, QString profile, QString header)
 {
     bool successfullyPassed = 1;
 
@@ -303,6 +303,12 @@ bool TwitterakBackend::saveUser(int type, QObject* name, QObject* phone,QObject*
         }
     }
 
+    //profile
+    user->set_profilePicture(profile.toStdString());
+
+    //header
+    user->set_header(header.toStdString());
+
     //custom
     if(type == 1)
     {
@@ -313,69 +319,158 @@ bool TwitterakBackend::saveUser(int type, QObject* name, QObject* phone,QObject*
         o_user.set_CEO(custom->property("text").toString().toStdString());
     }
 
-    //register user and create an ID for him
     if(successfullyPassed){
         warn->setProperty("visible", false);
-
-        if(user->get_id() == "")
-        {
-            //create ID
-            string newId = "1";
-            ifstream file ("userkeys.txt", ios::out);
-            if(file)
-            {
-                file.seekg(0,ios::end);
-                do{
-                    file.unget();
-                    file.unget();
-                    cout << file.tellg() << " ";
-                }while(file.get() != '\n' && file.tellg() > 1);
-                if(file.tellg() == 1)file.seekg(0,ios::beg);
-
-                string r_id , r_username;
-                file >> r_id >> r_username;
-
-                if(r_id != "")
-                {
-                    r_id.erase(r_id.length()-1);
-
-                    newId = to_string(stoi(r_id) + 1);
-                }
-
-            }
-            file.close();
-
-            if(type == 0)
-                newId += 'a';
-            else if(type == 1)
-                newId += 'p';
-            else if(type == 2)
-                newId += 'o';
-
-            //set ID
-            user->set_id(newId);
-
-            //add user ID , Username and password in userkeys.txt
-            ofstream out("userkeys.txt", ios::app);
-            out << user->get_id() << " " << user->get_username() << " " << user->get_password() << endl;
-            out.close();
-
-            //set profile picture
-            user->set_profilePicture("../../img/avatar1.png");
-
-            //set header
-            user->set_header("lightblue");
-        }
-
-
-        //register user profile in "/user/ID.txt"
-        saveProfile(type);
     }
 
     return successfullyPassed;
 }
 
-bool TwitterakBackend::loginBtn(QObject* usernameField, QObject* passwordField, QObject* usernameWarn, QObject* passwordWarn)
+void TwitterakBackend::registerUser(int type)
+{
+    //create ID
+    string newId = "1";
+    ifstream file ("userkeys.txt", ios::out);
+    if(file)
+    {
+        file.seekg(0,ios::end);
+        do{
+            file.unget();
+            file.unget();
+            cout << file.tellg() << " ";
+        }while(file.get() != '\n' && file.tellg() > 1);
+        if(file.tellg() == 1)file.seekg(0,ios::beg);
+
+        string r_id , r_username;
+        file >> r_id >> r_username;
+
+        if(r_id != "")
+        {
+            r_id.erase(r_id.length()-1);
+
+            newId = to_string(stoi(r_id) + 1);
+        }
+    }
+    file.close();
+    if(type == 0)
+        newId += 'a';
+    else if(type == 1)
+        newId += 'p';
+    else if(type == 2)
+        newId += 'o';
+
+
+    //set ID
+    user->set_id(newId);
+
+
+    //add user ID , Username and password in userkeys.txt
+    ofstream out("userkeys.txt", ios::app);
+    out << user->get_id() << " " << user->get_username() << " " << user->get_password() << endl;
+    out.close();
+}
+
+bool TwitterakBackend::saveUserInfo(bool saveTempUser)
+{
+    User* userPtr = saveTempUser ? tempUser : user;
+
+    string id = userPtr->get_id();
+    char type = id[id.length()-1];
+
+    ofstream out("users/" + userPtr->get_id() + ".txt", ofstream::trunc);
+
+    if(out){
+        //id
+        out << "1 " << userPtr->get_id() << endl;
+        //username
+        out << "2 " << userPtr->get_username() << endl;
+        //password
+        out << "3 " << userPtr->get_password() << endl;
+        //name
+        out << "4 " <<userPtr->get_name() << endl;
+        //profile picture
+        out << "5 " <<userPtr->get_profilePicture() << endl;
+        //header
+        out << "6 " <<userPtr->get_header() << endl;
+        //phone number
+        if(type != 'a')
+            out << "7 " << userPtr->get_phoneNumber() << endl;
+        //country
+        if(userPtr->get_country() != "")
+            out << "8 " << userPtr->get_country() << endl;
+        //date of birth
+        if(type != 'o' && userPtr->get_dateOfBirth().getYear())
+            out << "9 " << userPtr->get_dateOfBirth().getYear() << " " << user->get_dateOfBirth().getMonth() << " " << user->get_dateOfBirth().getDay() << endl;
+        //bio
+        if(userPtr->get_bio() != "")
+            out << "10 " << userPtr->get_bio() << '~' << endl;
+        //link
+        if(userPtr->get_link() != "")
+            out << "11 " << userPtr->get_link() << endl;
+        //custom
+        if(type == 'p')
+        {
+            if(tempUser)
+            {
+                if(!temp_p_user.get_office().empty())
+                    out <<"12 " <<  temp_p_user.get_office() << endl;
+            }
+            else
+            {
+                if(!p_user.get_office().empty())
+                    out <<"12 " <<  p_user.get_office() << endl;
+            }
+
+        }
+        if(type == 'o')
+        {
+            if(tempUser)
+            {
+                if(!temp_o_user.get_CEO().empty())
+                    out <<"12 " <<  temp_o_user.get_CEO() << endl;
+            }
+            else
+            {
+                if(!o_user.get_CEO().empty())
+                    out <<"12 " <<  o_user.get_CEO() << endl;
+            }
+        }
+        vector<string> followers = userPtr->get_followers();
+        qDebug() << "save " << followers.size() << " followers for " << userPtr->get_username();
+        if(followers.size())
+        {
+            size_t len = followers.size();
+            out << "13 " << len;
+            for(size_t i{0}; i < len; i++)
+                out << " " << followers[i];
+            out << endl;
+        }
+        vector<string> followings = userPtr->get_followings();
+        qDebug() << "save " << followings.size() << " followings for " << userPtr->get_username();
+        if(followings.size())
+        {
+            size_t len = followings.size();
+            out << "14 " << len;
+            for(size_t i{0}; i < len; i++)
+                out << " " << followings[i];
+            out << endl;
+        }
+    }
+    else
+    {
+        out.close();
+        system("mkdir users");
+        system("mkdir tweets");
+        saveUserInfo(saveTempUser);
+    }
+
+    out.close();
+
+    return 1;
+}
+
+
+bool TwitterakBackend::login(QObject* usernameField, QObject* passwordField, QObject* usernameWarn, QObject* passwordWarn)
 {
     string username = usernameField->property("text").toString().toStdString();
     string password = passwordField->property("text").toString().toStdString();
@@ -397,7 +492,7 @@ bool TwitterakBackend::loginBtn(QObject* usernameField, QObject* passwordField, 
                     file.close();
                     QVariant qv(QString(""));
                     passwordWarn->setProperty("text", qv);
-                    loadProfile(r_id);
+                    loadProfile(r_id, 0);
                     return 1;
                 }
                 else
@@ -439,177 +534,144 @@ string TwitterakBackend::findIdbyUsername(string username)
     return "unknown";
 }
 
-bool TwitterakBackend::saveProfile(int type)
+bool TwitterakBackend::loadProfile(string id, bool loadToTemp)
 {
-    ofstream out("users/" + user->get_id() + ".txt", ofstream::trunc);
-
-    if(out){
-        qDebug() << "save header: " << user->get_header();
-        out << "1 " << user->get_id() << endl;
-        out << "2 " << user->get_username() << endl;
-        out << "3 " << user->get_password() << endl;
-        out << "4 " <<user->get_name() << endl;
-        out << "5 " <<user->get_profilePicture() << endl;
-        out << "6 " <<user->get_header() << endl;
-        if(type != 0)
-            out << "7 " << user->get_phoneNumber() << endl;
-        if(user->get_country() != "")
-            out << "8 " << user->get_country() << endl;
-        if(type != 2 && user->get_dateOfBirth().getYear())
-            out << "9 " << user->get_dateOfBirth().getYear() << " " << user->get_dateOfBirth().getMonth() << " " << user->get_dateOfBirth().getDay() << endl;
-        if(user->get_bio() != "")
-            out << "10 " << user->get_bio() << '~' << endl;
-        if(user->get_link() != "")
-            out << "11 " << user->get_link() << endl;
-        if(type == 1 && p_user.get_office() != "")
-            out <<"12 " <<  p_user.get_office() << endl;
-        else if(type == 2 && o_user.get_CEO() != "")
-            out <<"13 " <<  o_user.get_CEO() << endl;
-        vector<string> followers = user->get_followers();
-        if(followers.size())
-        {
-            size_t len = followers.size();
-            out << "14 " << len;
-            for(size_t i{0}; i < len; i++)
-                out << " " << followers[i];
-            out << endl;
-        }
-        vector<string> followings = user->get_followings();
-        if(followings.size())
-        {
-            size_t len = followings.size();
-            out << "15 " << len;
-            for(size_t i{0}; i < len; i++)
-                out << " " << followings[i];
-            out << endl;
-        }
-
-
-    }else{
-        out.close();
-        system("mkdir users");
-        saveProfile(type);
+    User* userPtr;
+    char type = id[id.length()-1];
+    if(loadToTemp)
+    {
+        if(type == 'p')
+            tempUser = &temp_p_user;
+        else if(type == 'o')
+            tempUser = &temp_o_user;
+        else
+            tempUser = &temp_a_user;
+        userPtr = tempUser;
+    }
+    else
+    {
+        if(type == 'p')
+            user = &p_user;
+        else if(type == 'o')
+            user = &o_user;
+        else
+            user = &a_user;
+        userPtr = user;
     }
 
-    out.close();
-
-    return 1;
-}
-
-bool TwitterakBackend::loadProfile(string id)
-{
-    char type = id[id.length()-1];
-    qDebug() << type << " " << id;
-    if(type == 'p')
-        user = &p_user;
-    else if(type == 'o')
-        user = &o_user;
-    else
-        user = &a_user;
 
     ifstream in("users/" + id + ".txt");
     if(in){
-        qDebug() << "found";
         int step;
-        while(!in.eof())
-        {
-            step = 0;
-            in >> step;
-
-            string value;
-            switch(step)
+        try{
+            while(!in.eof())
             {
-            case 1:
-                in >> value;
-                user->set_id(value);
-                qDebug() << "id: " << value << '\n';
-                break;
-            case 2:
-                in >> value;
-                qDebug() << "username: " << value << '\n';
-                user->set_username(value);
+                step = 0;
+                in >> step;
 
-                break;
-            case 3:
-                in >> value;
-                user->set_password(value);
-                qDebug() << "password: " << value << '\n';
-                break;
-            case 4:
-                in.ignore(1);
-                getline(in,value);
-                user->set_name(value);
-                qDebug() << "name: " << value << '\n';
-                break;
-            case 5:
-                in >> value;
-                user->set_profilePicture(value);
-                break;
-            case 6:
-                in >> value;
-                user->set_header(value);
-                break;
-            case 7:
-                in >> value;
-                user->set_phoneNumber(value);
-                qDebug() << "phone: " << value << '\n';
-                break;
-            case 8:
-                in.ignore(1);
-                getline(in,value);
-                user->set_country(value);
-                qDebug() << "country: " << value << '\n';
-                break;
-            case 9:{
-                int day, month, year;
-                in >> year >> month >> day;
-                Date date(year,month,day);
-                user->set_dateOfBirth(date);
-                qDebug() << "year: " << year << " month: " << month << " day: " << day <<  '\n';
-                break;}
-            case 10:
-                in.ignore(1);
-                getline(in,value,'~');
-                user->set_bio(value);
-                qDebug() << "bio: " << value << '\n';
-                break;
-            case 11:
-                in >> value;
-                user->set_link(value);
-                qDebug() << "link: " << value << '\n';
-                break;
-            case 12:
-                in >> value;
-                if(type == 'p')
-                    p_user.set_office(value);
-                else if(type == 'o')
-                    o_user.set_CEO(value);
-                qDebug() << "custom: " << value << '\n';
-                break;
-            case 13:{
-                vector<string> followers;
-                size_t len;
-                in >> len;
-                for(size_t i{0}; i < len; i++){
+                string value;
+                switch(step)
+                {
+                case 1:
                     in >> value;
-                    followers.push_back(value);
-                }
-                user->set_followers(followers);
-                break;}
-            case 14:{
-                vector<string> followings;
-                size_t len;
-                in >> len;
-                for(size_t i{0}; i < len; i++){
+                    userPtr->set_id(value);
+                    break;
+                case 2:
                     in >> value;
-                    followings.push_back(value);
+                    userPtr->set_username(value);
+                    qDebug() << "new usename :" << userPtr->get_username();
+                    break;
+                case 3:
+                    in >> value;
+                    userPtr->set_password(value);
+                    break;
+                case 4:
+                    in.ignore(1);
+                    getline(in,value);
+                    userPtr->set_name(value);
+                    break;
+                case 5:
+                    in >> value;
+                    userPtr->set_profilePicture(value);
+                    break;
+                case 6:
+                    in >> value;
+                    userPtr->set_header(value);
+                    break;
+                case 7:
+                    in >> value;
+                    userPtr->set_phoneNumber(value);
+                    break;
+                case 8:
+                    in.ignore(1);
+                    getline(in,value);
+                    userPtr->set_country(value);
+                    break;
+                case 9:{
+                    int day, month, year;
+                    in >> year >> month >> day;
+                    Date date(year,month,day);
+                    userPtr->set_dateOfBirth(date);
+                    break;}
+                case 10:
+                    in.ignore(1);
+                    getline(in,value,'~');
+                    userPtr->set_bio(value);
+                    break;
+                case 11:
+                    in >> value;
+                    userPtr->set_link(value);
+                    break;
+                case 12:
+                    in >> value;
+                    if(loadToTemp)
+                    {
+                        if(type == 'p')
+                            temp_p_user.set_office(value);
+                        else if(type == 'o')
+                            temp_o_user.set_CEO(value);
+                    }
+                    else
+                    {
+                        if(type == 'p')
+                            p_user.set_office(value);
+                        else if(type == 'o')
+                            o_user.set_CEO(value);
+                    }
+
+                    break;
+                case 13:{
+                    vector<string> followers;
+                    size_t len;
+                    in >> len;
+                    for(size_t i{0}; i < len; i++){
+                        in >> value;
+                        followers.push_back(value);
+                    }
+                    userPtr->set_followers(followers);
+                    break;}
+                case 14:{
+                    vector<string> followings;
+                    size_t len;
+                    in >> len;
+                    for(size_t i{0}; i < len; i++){
+                        in >> value;
+                        followings.push_back(value);
+                    }
+                    userPtr->set_followings(followings);
+                    break;}
+                default:
+                    break;
                 }
-                user->set_followings(followings);
-                break;}
-            default:
-                break;
             }
+            qDebug() << "loaded successfully";
         }
+        catch(exception &e)
+        {
+            qDebug() << "error while loading profile : " << e.what();
+        }
+
+
         return 1;
     }
     else
@@ -659,12 +721,155 @@ int TwitterakBackend::getType() const{
         return 2;
 }
 
-void TwitterakBackend::setProfilePicture(QString address)
+void TwitterakBackend::tweet(QObject* tweetBox)
 {
-    user->set_profilePicture(address.toStdString());
+    //get current date
+    const auto now = std::chrono::system_clock::now();
+    const std::time_t t_c = std::chrono::system_clock::to_time_t(now);
+    string date = std::ctime(&t_c);
+
+    //create id for tweet
+    long int id_int = time(NULL);
+    string id = to_string(id_int);
+
+    ofstream out("tweets/" + user->get_id() + "/" + id + ".txt");
+    if(out){
+        out << date << endl;
+        out << tweetBox->property("text").toString().toStdString();
+        out << '~' << endl;
+        out.close();
+    }
+    else
+    {
+        out.close();
+        const char* x = ("mkdir tweets/" + user->get_id()).c_str();
+        system(x);
+        tweet(tweetBox);
+    }
 }
 
-void TwitterakBackend::setHeader(QString color)
+
+void TwitterakBackend::loadTweets(QObject* listModel, QString id)
 {
-    user->set_header(color.toStdString());
+    string path = "tweets/" + id.toStdString();
+    vector<long int> fileNames;
+    if(filesystem::exists(path))
+    {
+        for (const auto & entry : filesystem::directory_iterator(path))
+        {
+            string fileName = entry.path();
+            //erase ".txt"
+            fileName.erase(fileName.length() - 4, 4);
+
+            //erase "path before file name"
+            for(size_t i{0}; i < fileName.length(); i++)
+            {
+                if(fileName[i] == '/')
+                {
+                    fileName.erase(0,i+1);
+                    i = 0;
+                }
+            }
+
+            //convert file name to long int
+            long int fileName_int = stol(fileName, nullptr, 10);
+
+            //add fileName_int to vector of file names
+            bool added = false;
+            if(fileNames.size() == 0)
+            {
+                fileNames.push_back(fileName_int);
+                added = 1;
+            }
+            for(size_t i{0}; i < fileNames.size() ; i++)
+            {
+                if(fileName_int < fileNames[i]){
+                    fileNames.insert(fileNames.begin() + i,fileName_int);
+                    added = 1;
+                    break;
+                }
+            }
+            if(added == 0)
+                fileNames.push_back(fileName_int);
+        }
+
+        for(int i{fileNames.size()-1}; i >= 0; i--)
+        {
+            ifstream in("tweets/"+ id.toStdString() + "/" + to_string(fileNames[i]) + ".txt");
+            string txt;
+            getline(in,txt,'~');
+
+            QMetaObject::invokeMethod(
+                listModel,
+                "addElement",
+                Q_ARG(QString, QString::fromStdString(txt))
+                );
+        }
+
+    }
+}
+
+bool TwitterakBackend::searchUser(QString username)
+{
+    ifstream in("userkeys.txt");
+    string username_s = username.toStdString();
+    if(in)
+    {
+        while(!in.eof())
+        {
+            string id_t , username_t, password_t;
+            in >> id_t >> username_t >> password_t;
+
+            if(username_t == username_s)
+            {
+                loadProfile(id_t, 1);
+                return 1;
+            }
+        }
+
+        return 0;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+void TwitterakBackend::logout()
+{
+    //clear user
+    user->clear();
+}
+
+void TwitterakBackend::follow(QString id)
+{
+    user->follow(id.toStdString());
+    tempUser->followed(user->get_id());
+    saveUserInfo(0);
+    saveUserInfo(1);
+    qDebug() << "temp followers : " << tempUser->get_followers().size() << " followings" << tempUser->get_followings().size();
+}
+
+void TwitterakBackend::unfollow(QString id)
+{
+    user->unfollow(id.toStdString());
+    tempUser->unfollowed(user->get_id());
+    saveUserInfo(0);
+    saveUserInfo(1);
+}
+
+bool TwitterakBackend::isFollowed(QString id)
+{
+    string id_s = id.toStdString();
+
+    vector<string> followings = user->get_followings();
+
+    for(size_t i{0}; i < followings.size(); i++)
+    {
+        if(followings[i] == id_s)
+        {
+            return 1;
+        }
+    }
+    return 0;
 }

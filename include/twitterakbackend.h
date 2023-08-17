@@ -9,6 +9,8 @@
 #include <fstream>
 #include <string>
 #include <stdio.h>
+#include <chrono>
+#include <filesystem>
 
 #include "User.h"
 #include "Date.h"
@@ -60,24 +62,50 @@ public:
     Q_INVOKABLE int getType() const;
 
 public slots:
-    bool signUpFirstStep(int type ,QObject* username, QObject* password, QObject* usernameWarn, QObject* passwordWarn);
-    bool saveUser(int type, QObject* name, QObject* phone,QObject* county,QObject* year,QObject* month,QObject* day,QObject* bio,QObject* link,QObject* custom,QObject* warn);
-    bool loginBtn(QObject* usernameField, QObject* passwordField, QObject* usernameWarn, QObject* passwordWarn);
-    bool saveProfile(int type);
-    bool loadProfile(std::string id);
+
+    //set username and password
+    //this func is called when user fills first register form or when user edits his/her profile
+    bool setMainInfo(int type ,QObject* username, QObject* password, QObject* usernameWarn, QObject* passwordWarn);
+
+    //set secondary info contains "name" "phone" "country" "date of birth" "bio" "link" "office/Ceo"(custom)
+    //this func is called when user fills second register form or when user edits his/her profile
+    bool setSecondaryInfo(int type, QObject* name, QObject* phone,QObject* county,QObject* year,QObject* month,QObject* day,QObject* bio,QObject* link, QObject* custom,QObject* warn , QString profile, QString header);
+
+    //create an ID for user
+    //save ID , username and password in userkeys.txt
+    //this func is called when user fills both register forms successfully (sign up)
+    void registerUser(int type);
+
+    //save all user profiles info contains:
+    //"ID" "username" "password" "name" "phone" "country" "date of birth" "bio" "link" "office/Ceo"(custom)
+    //in users/"ID".txt
+    bool saveUserInfo(bool saveTempUser);
+
+    //validate entered username and password with userkeys.txt
+    //if validation was successfull loads user profile and returns 1
+    //else visible warn labels, assign a warn to text property and return 0
+    bool login(QObject* usernameField, QObject* passwordField, QObject* usernameWarn, QObject* passwordWarn);
+
+    bool loadProfile(std::string id, bool loadToTemp);
     void updateUserKey();
-    void setProfilePicture(QString);
-    void setHeader(QString);
+    void tweet(QObject* tweetBox);
+    void loadTweets(QObject* listModel, QString id);
+    bool searchUser(QString username);
+    void logout();
+    void follow(QString id);
+    void unfollow(QString id);
+    bool isFollowed(QString id);
     std::string findIdbyUsername(std::string username);
+
 
 private:
     void addKeywordToUserHistory(std::string word);
 
-    User tempUser;
     User* user;
-    AnonymousUser a_user;
-    PersonalUser p_user;
-    OrganisationUser o_user;
+    User* tempUser;
+    AnonymousUser a_user, temp_a_user;
+    PersonalUser p_user, temp_p_user;
+    OrganisationUser o_user, temp_o_user;
 
 };
 

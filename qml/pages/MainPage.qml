@@ -18,7 +18,6 @@ Item {
             height: parent.height
             color: "#e8ecef"
 
-
             Rectangle{
                 anchors.top: parent.top
                 height: 50
@@ -41,6 +40,22 @@ Item {
                         radius: 20
                         border.width: 1
                         border.color: "#b5b8ba"
+                    }
+
+                    onTextChanged:text = text.replace(/\s+/g,'')
+
+                    onEditingFinished: {
+                        if(text.length > 0)
+                        {
+                            if(text === backend.get_username())
+                            {
+                                mainStack.push(myProfile)
+                            }
+                            else if(backend.searchUser(text.toString()))
+                            {
+                                stack.push(profilePage)
+                            }
+                        }
                     }
                 }
 
@@ -69,7 +84,9 @@ Item {
                         }
                     }
 
-                    onClicked: mainStack.push(myProfile)
+                    onClicked: {
+                        mainStack.push(myProfile);
+                    }
                 }
             }
         }
@@ -77,9 +94,14 @@ Item {
 
     Component{
         id: myProfile
+
         Rectangle{
             anchors.fill: parent
             color: "#e8ecef"
+
+            Component.onCompleted: {
+                backend.loadTweets(tweetsModel, backend.get_id());
+            }
 
 
             Rectangle{
@@ -124,9 +146,8 @@ Item {
 
                 Rectangle{
                     width: parent.width - 50
-                    height: column.height
+                    height: column.height - tweetsList.height - spacer.height
                     anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
                     radius: 10
 
                     Column{
@@ -160,6 +181,29 @@ Item {
                                 backgroundRadius: 20
                                 label: "Edit"
                                 onClicked: mainStack.push(editPage)
+                            }
+
+                            FlatButton{
+                                width: 120
+                                height: 40
+                                anchors.right: parent.right
+                                anchors.top: parent.top
+                                anchors.rightMargin: 150
+                                anchors.topMargin: 160
+                                backgroundRadius: 20
+                                backgoundColor: "red"
+                                label: "Logout"
+                                onClicked: {
+
+                                    backend.logout();
+                                    //close profile page
+                                    mainStack.pop();
+                                    //close main page
+                                    stack.pop();
+                                    //close login page and open it again
+                                    stack.pop();
+                                    stack.push(loginPage)
+                                }
                             }
                         }
 
@@ -197,6 +241,7 @@ Item {
                         }
 
                         Row{
+                            bottomPadding: 30
                             Text{
                                 text: backend.get_followers()
                                 topPadding: 20
@@ -222,11 +267,105 @@ Item {
                                 color: "#3a3a3a"
                             }
                         }
+
+                        Rectangle{
+                            width: parent.width
+                            height: newTweetColumn.height
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            color: "#ffffff"
+                            radius: 15
+                            Column{
+                                id: newTweetColumn
+                                width: parent.width - 50
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.verticalCenter: parent.verticalCenter
+                                spacing: 10
+
+                                Row{
+                                    id: row
+                                    spacing: 10
+                                    Image{
+                                        width: 40
+                                        height: 40
+                                        source: backend.get_profilePicture()
+                                    }
+
+                                    Text{
+                                       text: backend.get_name()
+                                       font.pixelSize: 17
+                                       anchors.verticalCenter: parent.verticalCenter
+                                    }
+                                }
+
+                                Rectangle{
+                                    width: parent.width
+                                    height: textInput.height + 20
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    color: "#eeeeee"
+                                    radius: 5
+                                    border.width: 1
+                                    border.color: "#dddddd"
+
+                                    TextEdit {
+                                        id: textInput;
+                                        width: parent.width - 10
+                                        anchors.centerIn: parent
+                                        selectByMouse: true
+                                        font.pixelSize: 17
+                                        wrapMode: TextEdit.WrapAtWordBoundaryOrAnywhere;
+                                        color: "black";
+                                    }
+                                }
+
+                                FlatButton{
+                                    width: 70
+                                    height: 40
+                                    label: "Tweet"
+                                    anchors.right: parent.right
+
+                                    onClicked: {
+                                        backend.tweet(textInput);
+                                        mainStack.pop()
+
+                                    }
+                                }
+                            }
+                        }
+
+
+                        Rectangle{
+                            id: spacer
+                            width: parent.width
+                            height: 50
+                            color: "transparent"
+                        }
+
+
+
+                        ListModel{
+                            id: tweetsModel
+                            function addElement(value: string){
+                                append({txt: value, name: backend.get_name(), profilePicture: backend.get_profilePicture()});
+                            }
+                        }
+
+                        ListView{
+                            id: tweetsList
+                            width: parent.width
+                            height: contentHeight
+                            orientation: ListView.Vertical
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            spacing: 20
+                            model: tweetsModel
+                            delegate: TweetCard{
+
+                            }
+                        }
+
                     }
                 }
             }
        }
-
     }
 
     Component{
@@ -607,13 +746,11 @@ Item {
                             nameSignupField.error = false
                             phoneSignupField.error = false
 
-                            if(backend.signUpFirstStep(type, usernameField, passwordField, username_warn, password_warn))
+                            if(backend.setMainInfo(type, usernameField, passwordField, username_warn, password_warn))
                             {
                                 backend.updateUserKey()
-                                backend.setProfilePicture(profileList.currentProfile)
-                                backend.setHeader(headerList.currentHeader)
 
-                                if(backend.saveUser(
+                                if(backend.setSecondaryInfo(
                                     type,
                                     nameSignupField,
                                     phoneSignupField,
@@ -624,12 +761,18 @@ Item {
                                     bioSignupField,
                                     linkSignupField,
                                     customField,
-                                    warnLabel
+                                    warnLabel,
+                                    profileList.currentProfile.toString(),
+                                    headerList.currentHeader.toString()
                                 ))
                                 {
-                                    //open twitterak
+                                    //save user info
+                                    backend.saveUserInfo(0);
+                                    //close edit page
                                     mainStack.pop()
+                                    //close profile page
                                     mainStack.pop()
+                                    //restart main page
                                     mainStack.pop()
                                     mainStack.push(mainPage)
                                 }

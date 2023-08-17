@@ -148,7 +148,7 @@ Item {
                         height: 40
                         label: "Next"
                         onClicked:{
-                            if(backend.signUpFirstStep(type, usernameField, passwordField, username_warn, password_warn))
+                            if(backend.setMainInfo(type, usernameField, passwordField, username_warn, password_warn))
                             {
                                 signupStack.push(final_signup_Page)
                                 signupStack.currentPage++
@@ -396,7 +396,7 @@ Item {
                             nameSignupField.error = false
                             phoneSignupField.error = false
 
-                            if(backend.saveUser(
+                            if(backend.setSecondaryInfo(
                                 type,
                                 nameSignupField,
                                 phoneSignupField,
@@ -407,9 +407,15 @@ Item {
                                 bioSignupField,
                                 linkSignupField,
                                 customField,
-                                warnLabel
+                                warnLabel,
+                                "../../img/avatar1.png",
+                                "lightblue"
                             ))
                             {
+                                //register user
+                                backend.registerUser(type);
+                                //save user info
+                                backend.saveUserInfo(0);
                                 //open twitterak
                                 stack.pop()
                                 stack.push(mainPage)
