@@ -13,3 +13,9 @@ std::string PersonalUser::get_office() const
 {
     return office;
 }
+
+void PersonalUser::clear()
+{
+    User::clear();
+    office.clear();
+}
