@@ -4,6 +4,7 @@ import QtQuick.Controls
 
 TextField {
     property bool error: false
+    property string fillColor: "#ffffff"
     width: 220
     height: 40
     color: "#000000"
@@ -12,7 +13,7 @@ TextField {
         id: background
         width: parent.width
         height: parent.height
-        color: "#ffffff"
+        color: fillColor
         radius: 5
         border.color: "#b5b5b5"
         border.width: 1
