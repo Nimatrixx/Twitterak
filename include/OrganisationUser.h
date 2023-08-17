@@ -11,6 +11,8 @@ public:
     void set_bio(std::string);
     void set_CEO(std::string);
     std::string get_CEO() const;
+
+    void clear();
 private:
     std::string CEO;
 };

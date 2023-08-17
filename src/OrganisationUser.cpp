@@ -25,3 +25,9 @@ string OrganisationUser::get_CEO() const
 {
     return CEO;
 }
+
+void OrganisationUser::clear()
+{
+    User::clear();
+    CEO.clear();
+}
