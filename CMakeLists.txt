@@ -25,6 +25,7 @@ qt_add_qml_module(apptwitterak
     qml/pages/SignupPage.qml
     qml/pages/MainPage.qml
     qml/pages/ProfilePage.qml
+    qml/components/TweetCard.qml
 
     RESOURCES
     twitterak.qrc
@@ -36,6 +37,8 @@ qt_add_qml_module(apptwitterak
     img/avatar4.png
     img/avatar5.png
     img/avatar6.png
+    img/like.png
+    img/unlike.png
 
     RESOURCE_PREFIX "/"
 
