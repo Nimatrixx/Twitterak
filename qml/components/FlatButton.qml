@@ -8,6 +8,8 @@ Button {
     property color textColor: "#ffffff"
     property int fontWeight: Font.Bold
     property int backgroundRadius: 5
+    property int borderWidth: 0
+    property color borderColor: "#2f7fff"
 
     background: Rectangle {
         id: button_background
@@ -15,6 +17,8 @@ Button {
         height: parent.height
         color: pressed ? Qt.darker(backgoundColor,1.2) : backgoundColor
         radius: backgroundRadius
+        border.width: borderWidth
+        border.color: borderColor
         Text{
             id: innerText
             anchors.centerIn: parent
