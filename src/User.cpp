@@ -252,3 +252,21 @@ bool User::unfollowed(string followerId)
 
     return 0;
 }
+
+
+void User::clear()
+{
+    id.clear();
+    username.clear();
+    password.clear();
+    name.clear();
+    phoneNumber.clear();
+    bio.clear();
+    country.clear();
+    link.clear();
+    birthDate.clear();
+    profilePicture.clear();
+    header.clear();
+    followers.clear();
+    followings.clear();
+}

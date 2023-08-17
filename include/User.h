@@ -44,6 +44,7 @@ public:
     bool followed(std::string);
     bool unfollowed(std::string);
 
+    virtual void clear();
 
 protected:
     std::string bio;
