@@ -44,18 +44,42 @@ Rectangle{
         }
 
         Row{
+            spacing: 50
+
+
             Button{
-                width: 30
-                height: 30
+                width: 25
+                height: 25
                 flat: true
                 background: Image{
                     anchors.fill: parent
-                    source: "../../img/like.png"
+                    source: isLiked ? "../../img/like.png" : "../../img/unlike.png"
+                }
+
+                Text{
+                    anchors.left: parent.right
+                    leftPadding: 10
+                    text: likes
+                }
+
+                onClicked: {
+                    if(isLiked)
+                        likes -= 1
+                    else
+                        likes += 1
+
+                    isLiked = !isLiked
+
+                    backend.likeTweet(ownerId, id, isLiked);
                 }
             }
 
+
+
             Text{
-                text: "123"
+                text: date
+                color: "#d1d1d1"
+                font.pixelSize: 15
             }
         }
     }

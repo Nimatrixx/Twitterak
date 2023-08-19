@@ -41,6 +41,7 @@ public:
     Q_INVOKABLE int get_followings() const;
     Q_INVOKABLE QString get_profilePicture() const;
     Q_INVOKABLE QString get_header() const;
+    Q_INVOKABLE QString get_custom() const;
 
 
     Q_INVOKABLE QString get_temp_username() const;
@@ -58,8 +59,10 @@ public:
     Q_INVOKABLE int get_temp_followings() const;
     Q_INVOKABLE QString get_temp_profilePicture() const;
     Q_INVOKABLE QString get_temp_header() const;
+    Q_INVOKABLE QString get_temp_custom() const;
 
-    Q_INVOKABLE int getType() const;
+    Q_INVOKABLE int get_type() const;
+    Q_INVOKABLE int get_temp_type() const;
 
 public slots:
 
@@ -86,15 +89,17 @@ public slots:
     //else visible warn labels, assign a warn to text property and return 0
     bool login(QObject* usernameField, QObject* passwordField, QObject* usernameWarn, QObject* passwordWarn);
 
-    bool loadProfile(std::string id, bool loadToTemp);
+    bool loadProfile(QString id, bool loadToTemp);
     void updateUserKey();
     void tweet(QObject* tweetBox);
     void loadTweets(QObject* listModel, QString id);
+    void likeTweet(QString tweetOwnerId, QString tweetId, bool isLiked);
     bool searchUser(QString username);
     void logout();
     void follow(QString id);
     void unfollow(QString id);
     bool isFollowed(QString id);
+    bool loadFollowings(QObject* followingsModel);
     std::string findIdbyUsername(std::string username);
 
 

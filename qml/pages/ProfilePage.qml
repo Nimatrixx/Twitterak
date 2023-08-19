@@ -3,12 +3,20 @@ import QtQuick.Controls
 import "../components"
 
 Item {
+    property int type: backend.get_temp_type()
+
     Rectangle{
         anchors.fill: parent
         color: "#e8ecef"
 
         Component.onCompleted: {
             backend.loadTweets(tweetsModel, backend.get_temp_id());
+            if(type == 0)
+            {
+                followButton.visible = 0;
+                followersLabel.visible = 0;
+                followersNum.visible = 0;
+            }
         }
 
 
@@ -39,7 +47,11 @@ Item {
                     anchors.centerIn: parent
                     source: "../../img/arrow_icon.png"
                 }
-                onClicked: stack.pop();
+                onClicked: {
+                    stack.pop();
+                    stack.pop();
+                    stack.push(mainPage)
+                }
             }
         }
 
@@ -80,6 +92,7 @@ Item {
                         }
 
                         FlatButton{
+                            id: followButton
                             property bool isFollowed: backend.isFollowed(backend.get_temp_id())
 
                             width: 120
@@ -100,7 +113,6 @@ Item {
                                     backend.follow(backend.get_temp_id());
 
                                 isFollowed = !isFollowed
-
                             }
                         }
                     }
@@ -138,15 +150,31 @@ Item {
                         color: "#4c9ded"
                     }
 
+                    Text{
+                        text: if(backend.get_custom() !== "")
+                              {
+                                  if(type == 1)
+                                        "works on " + backend.get_custom()
+                                  else if(type == 2)
+                                        "ceo of " + backend.get_custom()
+                              }
+                        font.pixelSize: 15
+                        topPadding: 5
+                        color: "#4a4a4a"
+                    }
+
                     Row{
                         bottomPadding: 30
+                        spacing: 10
                         Text{
+                            id: followersNum
                             text: backend.get_temp_followers()
                             topPadding: 20
                             font.pixelSize: 15
                             color: "#000000"
                         }
                         Text{
+                            id: followersLabel
                             text: qsTr(" followers")
                             topPadding: 20
                             font.pixelSize: 15
@@ -177,8 +205,8 @@ Item {
 
                     ListModel{
                         id: tweetsModel
-                        function addElement(value: string){
-                            append({txt: value, name: backend.get_temp_name(), profilePicture: backend.get_temp_profilePicture()});
+                        function addElement(tweetId: string, tweetText: string, tweetDate: string, tweetLikes: int, tweetIsLiked: bool  ){
+                            append({id: tweetId, txt: tweetText, date: tweetDate, likes: tweetLikes, isLiked: tweetIsLiked, name: backend.get_temp_name(), profilePicture: backend.get_temp_profilePicture(), ownerId: backend.get_temp_id()});
                         }
                     }
 

@@ -39,6 +39,7 @@ qt_add_qml_module(apptwitterak
     img/avatar6.png
     img/like.png
     img/unlike.png
+    img/anonymous.png
 
     RESOURCE_PREFIX "/"
 

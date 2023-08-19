@@ -3,7 +3,7 @@ import QtQuick.Controls
 import QtQuick.Window
 import "../components"
 Item {
-    property int type: backend.getType()
+    property int type: backend.get_type()
 
     StackView{
         id:mainStack
@@ -13,10 +13,15 @@ Item {
 
     Component{
         id: main
+
         Rectangle{
             width: parent.width
             height: parent.height
             color: "#e8ecef"
+
+            Component.onCompleted: {
+                followingsListModel.updateList();
+            }
 
             Rectangle{
                 anchors.top: parent.top
@@ -89,6 +94,81 @@ Item {
                     }
                 }
             }
+
+            ListModel{
+                id: followingsListModel
+
+                function updateList()
+                {
+                    backend.loadFollowings(followingsListModel);
+                }
+
+                function addElement(id: string, name: string, profilePic: string)
+                {
+                    append({id: id, name: name, profilePic: profilePic});
+                }
+            }
+
+            Rectangle{
+                y: 70
+                width: parent.width/2
+                height: followingsListView.contentHeight > 0 ? followingsListView.height + 10 : 0
+                anchors.horizontalCenter: parent.horizontalCenter
+                color: "#abb9ba"
+                border.width: 2
+                border.color: "#8b9798"
+                radius: 10
+                ListView{
+                    id: followingsListView
+                    width: parent.width-20
+                    height: contentHeight > 400 ? 400 : contentHeight;
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    highlightMoveVelocity: 300
+                    spacing: 5
+                    model: followingsListModel
+                    clip: true
+                    delegate: Rectangle{
+                        width: parent.width
+                        height: 50
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        radius: 10
+
+                        Row{
+                            anchors.left: parent.left
+                            anchors.leftMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            spacing: 10
+                            Image{
+                                width: 30
+                                height: 30
+                                source: profilePic
+                            }
+
+                            Text{
+                               text: name
+                               font.pixelSize: 15
+                               anchors.verticalCenter: parent.verticalCenter
+                            }
+                        }
+
+                        FlatButton{
+                            width: 60
+                            height: 25
+                            anchors.right: parent.right
+                            anchors.rightMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            label: "profile"
+                            onClicked: {
+                                backend.loadProfile(id,1)
+                                stack.push(profilePage)
+                            }
+                        }
+                    }
+                }
+            }
+
+
         }
     }
 
@@ -101,6 +181,11 @@ Item {
 
             Component.onCompleted: {
                 backend.loadTweets(tweetsModel, backend.get_id());
+                if(type === 0)
+                {
+                    followersNum.visible = 0;
+                    followersLabel.visible = 0;
+                }
             }
 
 
@@ -240,15 +325,30 @@ Item {
                             color: "#4c9ded"
                         }
 
+                        Text{
+                            text: if((type == 1 || type == 2) && backend.get_custom() != "")
+                                  {
+                                      if(type == 1)
+                                            "works on " + backend.get_custom()
+                                      else if(type == 2)
+                                            "ceo of " + backend.get_custom()
+                                  }
+                            font.pixelSize: 15
+                            topPadding: 5
+                            color: "#4a4a4a"
+                        }
+
                         Row{
                             bottomPadding: 30
                             Text{
+                                id: followersNum
                                 text: backend.get_followers()
                                 topPadding: 20
                                 font.pixelSize: 15
                                 color: "#000000"
                             }
                             Text{
+                                id: followersLabel
                                 text: qsTr(" followers")
                                 topPadding: 20
                                 font.pixelSize: 15
@@ -310,10 +410,15 @@ Item {
                                         id: textInput;
                                         width: parent.width - 10
                                         anchors.centerIn: parent
-                                        selectByMouse: true
                                         font.pixelSize: 17
-                                        wrapMode: TextEdit.WrapAtWordBoundaryOrAnywhere;
-                                        color: "black";
+                                        onContentWidthChanged: {
+                                            if(contentWidth >= width)
+                                            {
+                                                remove(text.length-2, text.length - 1)
+
+                                                append('')
+                                            }
+                                        }
                                     }
                                 }
 
@@ -344,8 +449,17 @@ Item {
 
                         ListModel{
                             id: tweetsModel
-                            function addElement(value: string){
-                                append({txt: value, name: backend.get_name(), profilePicture: backend.get_profilePicture()});
+                            function addElement(tweetId: string, tweetText: string, tweetDate: string, tweetLikes: int, tweetIsLiked: bool){
+                                append({
+                                   id: tweetId,
+                                   txt: tweetText,
+                                   date: tweetDate,
+                                   likes: tweetLikes,
+                                   isLiked: tweetIsLiked,
+                                   name: backend.get_name(),
+                                   profilePicture: backend.get_profilePicture(),
+                                   ownerId: backend.get_id()
+                               });
                             }
                         }
 
@@ -380,6 +494,14 @@ Item {
                 color: "#00ffffff"
                 radius: 10
 
+                Component.onCompleted: {
+                    if(type === 0)
+                    {
+                        profileList.visible = 0;
+                        profileListLabel.visible = 0;
+                    }
+                }
+
                 Row{
                     x: 10
                     y: 20
@@ -389,6 +511,7 @@ Item {
                         spacing: 10
 
                         Label {
+                            id: profileListLabel
                             anchors.horizontalCenter: parent.horizontalCenter
                             width: 220
                             height: 15
@@ -398,6 +521,7 @@ Item {
 
                         ListView{
                             property string currentProfile: backend.get_profilePicture()
+
                             id: profileList
                             width: 220
                             height: 30

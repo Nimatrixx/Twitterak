@@ -396,6 +396,7 @@ Item {
                             nameSignupField.error = false
                             phoneSignupField.error = false
 
+
                             if(backend.setSecondaryInfo(
                                 type,
                                 nameSignupField,
@@ -408,7 +409,7 @@ Item {
                                 linkSignupField,
                                 customField,
                                 warnLabel,
-                                "../../img/avatar1.png",
+                                type == 0 ? "../../img/anonymous.png": "../../img/avatar1.png",
                                 "lightblue"
                             ))
                             {

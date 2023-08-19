@@ -59,6 +59,16 @@ QString TwitterakBackend::get_profilePicture() const{
 QString TwitterakBackend::get_header() const{
     return QString::fromStdString(user->get_header());
 }
+QString TwitterakBackend::get_custom() const{
+
+    int type = get_type();
+    if(type == 1)
+        return QString::fromStdString(p_user.get_office());
+    if(type == 2)
+        return QString::fromStdString(o_user.get_CEO());
+    else
+        return QString::fromStdString("NULL");
+}
 
 
 QString TwitterakBackend::get_temp_username() const{
@@ -106,7 +116,14 @@ QString TwitterakBackend::get_temp_profilePicture() const{
 QString TwitterakBackend::get_temp_header() const{
     return QString::fromStdString(tempUser->get_header());
 }
+QString TwitterakBackend::get_temp_custom() const{
 
+    int type = get_temp_type();
+    if(type == 1)
+        return QString::fromStdString(temp_p_user.get_office());
+    if(type == 2)
+        return QString::fromStdString(temp_o_user.get_CEO());
+}
 
 void TwitterakBackend::addKeywordToUserHistory(string word)
 {
@@ -472,8 +489,12 @@ bool TwitterakBackend::saveUserInfo(bool saveTempUser)
 
 bool TwitterakBackend::login(QObject* usernameField, QObject* passwordField, QObject* usernameWarn, QObject* passwordWarn)
 {
+
     string username = usernameField->property("text").toString().toStdString();
     string password = passwordField->property("text").toString().toStdString();
+
+    if(username.empty())
+        return 0;
 
     ifstream file ("userkeys.txt", ios::out | ios::binary);
     if(file)
@@ -492,7 +513,7 @@ bool TwitterakBackend::login(QObject* usernameField, QObject* passwordField, QOb
                     file.close();
                     QVariant qv(QString(""));
                     passwordWarn->setProperty("text", qv);
-                    loadProfile(r_id, 0);
+                    loadProfile(QString::fromStdString(r_id), 0);
                     return 1;
                 }
                 else
@@ -534,10 +555,11 @@ string TwitterakBackend::findIdbyUsername(string username)
     return "unknown";
 }
 
-bool TwitterakBackend::loadProfile(string id, bool loadToTemp)
+bool TwitterakBackend::loadProfile(QString id, bool loadToTemp)
 {
     User* userPtr;
-    char type = id[id.length()-1];
+    string id_s = id.toStdString();
+    char type = id_s[id_s.length()-1];
     if(loadToTemp)
     {
         if(type == 'p')
@@ -560,7 +582,7 @@ bool TwitterakBackend::loadProfile(string id, bool loadToTemp)
     }
 
 
-    ifstream in("users/" + id + ".txt");
+    ifstream in("users/" + id_s + ".txt");
     if(in){
         int step;
         try{
@@ -709,8 +731,20 @@ void TwitterakBackend::updateUserKey()
     rename("userkeys_temp.txt","userkeys.txt");
 }
 
-int TwitterakBackend::getType() const{
+int TwitterakBackend::get_type() const{
     string id = user->get_id();
+    char lastCh = id[id.length() - 1];
+
+    if(lastCh == 'a')
+        return 0;
+    else if(lastCh == 'p')
+        return 1;
+    else
+        return 2;
+}
+
+int TwitterakBackend::get_temp_type() const{
+    string id = tempUser->get_id();
     char lastCh = id[id.length() - 1];
 
     if(lastCh == 'a')
@@ -734,9 +768,10 @@ void TwitterakBackend::tweet(QObject* tweetBox)
 
     ofstream out("tweets/" + user->get_id() + "/" + id + ".txt");
     if(out){
-        out << date << endl;
+        out << date;
         out << tweetBox->property("text").toString().toStdString();
         out << '~' << endl;
+        out << 0;
         out.close();
     }
     else
@@ -747,7 +782,6 @@ void TwitterakBackend::tweet(QObject* tweetBox)
         tweet(tweetBox);
     }
 }
-
 
 void TwitterakBackend::loadTweets(QObject* listModel, QString id)
 {
@@ -774,7 +808,7 @@ void TwitterakBackend::loadTweets(QObject* listModel, QString id)
             //convert file name to long int
             long int fileName_int = stol(fileName, nullptr, 10);
 
-            //add fileName_int to vector of file names
+            //add fileName_int to vector of file names in increasing order
             bool added = false;
             if(fileNames.size() == 0)
             {
@@ -796,16 +830,99 @@ void TwitterakBackend::loadTweets(QObject* listModel, QString id)
         for(int i{fileNames.size()-1}; i >= 0; i--)
         {
             ifstream in("tweets/"+ id.toStdString() + "/" + to_string(fileNames[i]) + ".txt");
-            string txt;
+            string txt, date;
+            getline(in, date);
             getline(in,txt,'~');
+
+            int likes;
+            in >> likes;
+
+
+            bool isLiked = 0;
+            string id_t;
+            string userId = user->get_id();
+            while(!in.eof())
+            {
+                in >> id_t;
+                if(id_t == userId)
+                {
+                    isLiked = 1;
+                    break;
+                }
+            }
 
             QMetaObject::invokeMethod(
                 listModel,
                 "addElement",
-                Q_ARG(QString, QString::fromStdString(txt))
-                );
+                Q_ARG(QString, QString::fromStdString(to_string(fileNames[i]))),
+                Q_ARG(QString, QString::fromStdString(txt)),
+                Q_ARG(QString, QString::fromStdString(date)),
+                Q_ARG(int , likes),
+                Q_ARG(bool, isLiked)
+            );
         }
 
+    }
+}
+
+void TwitterakBackend::likeTweet(QString tweetOwnerId, QString tweetId, bool isLiked)
+{
+    string path = "tweets/" + tweetOwnerId.toStdString() + "/" + tweetId.toStdString() + ".txt";
+    string path_t = "tweets/" + tweetOwnerId.toStdString() + "/." + tweetId.toStdString() + ".txt";
+
+    ifstream in(path);
+
+    if(in)
+    {
+        ofstream out(path_t);
+        string buffer;
+        getline(in,buffer,'~');
+        out << buffer << '~' << endl;
+
+        int likes;
+        in >> likes;
+
+        string id = user->get_id();
+        if(isLiked)
+        {
+            likes++;
+            out << likes;
+            out << " " << id ;
+            buffer.clear();
+            getline(in, buffer);
+            out << buffer;
+        }
+        else
+        {
+            qDebug() << "unlike";
+            likes--;
+            out << likes;
+            while(!in.eof())
+            {
+                in >> buffer;
+                qDebug() << buffer;
+                if(buffer != id)
+                {
+                    out << " " << buffer;
+                }
+                else
+                {
+                    buffer.clear();
+                    getline(in, buffer);
+                    out << buffer;
+                }
+            }
+        }
+        out.close();
+        in.close();
+
+        const char* path_c = path.c_str();
+        const char* path_t_c = path_t.c_str();
+        rename(path_t_c, path_c);
+    }
+    else
+    {
+        qDebug() << "couldnt find tweet file";
     }
 }
 
@@ -822,7 +939,7 @@ bool TwitterakBackend::searchUser(QString username)
 
             if(username_t == username_s)
             {
-                loadProfile(id_t, 1);
+                loadProfile(QString::fromStdString(id_t), 1);
                 return 1;
             }
         }
@@ -872,4 +989,28 @@ bool TwitterakBackend::isFollowed(QString id)
         }
     }
     return 0;
+}
+
+bool TwitterakBackend::loadFollowings(QObject* followingsModel)
+{
+    vector<string> followings = user->get_followings();
+    unsigned len = followings.size();
+
+    if(len == 0)
+        return 0;
+
+    for(size_t i{0}; i < len; i++)
+    {
+        loadProfile(QString::fromStdString(followings[i]), 1);
+
+        QMetaObject::invokeMethod(
+            followingsModel,
+            "addElement",
+            Q_ARG(QString, get_temp_id()),
+            Q_ARG(QString, get_temp_name()),
+            Q_ARG(QString, get_temp_profilePicture())
+            );
+    }
+
+    return 1;
 }
