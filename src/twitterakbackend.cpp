@@ -327,17 +327,18 @@ bool TwitterakBackend::setSecondaryInfo(int type, QObject* name, QObject* phone,
     user->set_header(header.toStdString());
 
     //custom
-    if(type != 0)
+    string customUsername;
+    if(type == 1 )
     {
-        string customUsername;
-        if(type == 1 )
-        {
-            customUsername = custom->property("text").toString().toStdString();
-        }
-        else if(type == 2)
-        {
-            customUsername = custom->property("text").toString().toStdString();
-        }
+        customUsername = custom->property("text").toString().toStdString();
+    }
+    else if(type == 2)
+    {
+        customUsername = custom->property("text").toString().toStdString();
+    }
+
+    if(type != 0 && customUsername.empty() == 0)
+    {
 
         //check validation of entered username
         bool found{0};
@@ -759,8 +760,11 @@ void TwitterakBackend::updateUserKey()
         ofstream out("userkeys_temp.txt");
         while(!file.eof())
         {
+            qDebug() << "read key";
             string r_id , r_username, r_password;
             file >> r_id >> r_username >> r_password;
+            if(r_id.empty())
+                continue;
             if(r_id != user->get_id())
             {
                 out << r_id << " " << r_username << " " << r_password << '\n';
@@ -808,6 +812,12 @@ int TwitterakBackend::get_temp_type() const{
 
 void TwitterakBackend::tweet(QObject* tweetBox)
 {
+    //get tweet text
+    string text = tweetBox->property("text").toString().toStdString();
+
+    if(text.empty())
+        return;
+
     //get current date
     const auto now = std::chrono::system_clock::now();
     const std::time_t t_c = std::chrono::system_clock::to_time_t(now);
@@ -820,7 +830,7 @@ void TwitterakBackend::tweet(QObject* tweetBox)
     ofstream out("tweets/" + user->get_id() + "/" + id + ".txt");
     if(out){
         out << date;
-        out << tweetBox->property("text").toString().toStdString();
+        out << text;
         out << '~' << endl;
         out << 0;
         out.close();
