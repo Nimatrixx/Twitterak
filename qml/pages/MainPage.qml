@@ -769,38 +769,46 @@ Item {
                             color: "#232323"
                         }
 
-                        TextArea {
-                            id: bioSignupField
+                        Rectangle{
                             width: 300
-                            height: 115
-                            color: "#000000"
-                            verticalAlignment: Text.AlignTop
-                            hoverEnabled: true
-                            placeholderTextColor: "#7f1c1c1c"
-                            background: Rectangle{
-                                width: 300
-                                height: 120
-                                color: "#ffffff"
-                                radius: 5
-                                border.width: 1
-                                border.color: "#b5b5b5"
-                            }
-                            placeholderText: "Bio"
+                            height: bioSignupField.height + 20
+                            color: "#ffffff"
+                            radius: 5
+                            border.width: 1
+                            border.color: "#b5b5b5"
 
-                            property int max :{ type== 2 ? 1100 : 160;}
+                            TextEdit {
+                                id: bioSignupField
+                                width: parent.width - 10
+                                anchors.centerIn: parent
+                                font.pixelSize: 17
+                                text: backend.get_bio()
 
-                            onTextChanged: {
+                                onContentWidthChanged: {
+                                    if(contentWidth >= width)
+                                    {
+                                        remove(text.length-2, text.length - 1)
 
-                                if (length > max) remove(max, length);
+                                        append('')
+                                    }
+                                }
+                                property int max :{ type== 2 ? 1100 : 160;}
 
-                                var pos = positionAt(1, 109);
-                                if(length >= pos)
-                                {
-                                    remove(pos, length);
+                                onTextChanged: {
+
+                                    if (length > max) remove(max, length);
+                                }
+
+                                onHeightChanged: {
+                                    var pos = positionAt(1, 109);
+                                    if(length >= pos)
+                                    {
+                                        remove(pos, length);
+                                    }
                                 }
                             }
-                            text: backend.get_bio()
                         }
+
 
                         Label {
                             width: 220
