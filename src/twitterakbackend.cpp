@@ -327,14 +327,65 @@ bool TwitterakBackend::setSecondaryInfo(int type, QObject* name, QObject* phone,
     user->set_header(header.toStdString());
 
     //custom
-    if(type == 1)
+    if(type != 0)
     {
-        p_user.set_office(custom->property("text").toString().toStdString());
+        string customUsername;
+        if(type == 1 )
+        {
+            customUsername = custom->property("text").toString().toStdString();
+        }
+        else if(type == 2)
+        {
+            customUsername = custom->property("text").toString().toStdString();
+        }
+
+        //check validation of entered username
+        bool found{0};
+        ifstream file ("userkeys.txt", ios::out);
+        if(file)
+        {
+            while(!file.eof())
+            {
+                string r_id , r_username, r_password;
+                file >> r_id >> r_username >> r_password;
+                if(r_username == customUsername)
+                {
+                    char lastCh = r_id[r_id.length() - 1];
+                    if(type == 1)
+                    {
+                        if(lastCh == 'o')
+                        {
+                            p_user.set_office(customUsername);
+                            found = 1;
+                        }
+                    }
+                    else if(type == 2)
+                    {
+                        if(lastCh == 'p')
+                        {
+                            o_user.set_CEO(customUsername);
+                            found = 1;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+        file.close();
+
+        if(found == 0)
+        {
+            successfullyPassed = 0;
+            QVariant qv;
+            if(type == 1)
+                qv = QString("* office username is not valid");
+            else
+                qv = QString("* ceo username is not valid");
+            warn->setProperty("text", qv);
+            warn->setProperty("visible", true);
+        }
     }
-    else if(type == 2)
-    {
-        o_user.set_CEO(custom->property("text").toString().toStdString());
-    }
+
 
     if(successfullyPassed){
         warn->setProperty("visible", false);
