@@ -114,6 +114,7 @@ public slots:
     void unfollow(QString id);
     bool isFollowed(QString id);
     bool loadFollowings(QObject* followingsModel);
+    void deleteUser();
     std::string findIdbyUsername(std::string username);
 
 

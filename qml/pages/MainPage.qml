@@ -326,12 +326,13 @@ Item {
                         }
 
                         Text{
-                            text: if((type == 1 || type == 2) && backend.get_custom() != "")
+                            text: if((type == 1 || type == 2) && backend.get_custom() !== "")
                                   {
                                       if(type == 1)
                                             "works on " + backend.get_custom()
                                       else if(type == 2)
                                             "ceo of " + backend.get_custom()
+                                      else ""
                                   }
                             font.pixelSize: 15
                             topPadding: 5
@@ -932,6 +933,27 @@ Item {
                     label: "cancel"
                     fontPixelSize: 12
                     onClicked: mainStack.pop()
+                }
+
+                TextButton{
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.horizontalCenterOffset: 150
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 30
+                    label: "Delete User"
+                    fontPixelSize: 12
+                    textColor: "red"
+                    onClicked: {
+                        backend.deleteUser();
+                        backend.logout();
+                        //close profile page
+                        mainStack.pop();
+                        //close main page
+                        stack.pop();
+                        //close login page and open it again
+                        stack.pop();
+                        stack.push(loginPage)
+                    }
                 }
             }
         }

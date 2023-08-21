@@ -45,7 +45,7 @@ qt_add_qml_module(apptwitterak
 
     SOURCES
     src/Date.cpp
-    src/UserKey.cpp
+
     src/User.cpp
     src/PersonalUser.cpp
     src/AnonymousUser.cpp
@@ -53,7 +53,7 @@ qt_add_qml_module(apptwitterak
     src/twitterakbackend.cpp
 
     include/Date.h
-    include/UserKey.h
+
     include/User.h
     include/PersonalUser.h
     include/AnonymousUser.h

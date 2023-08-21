@@ -123,6 +123,7 @@ QString TwitterakBackend::get_temp_custom() const{
         return QString::fromStdString(temp_p_user.get_office());
     if(type == 2)
         return QString::fromStdString(temp_o_user.get_CEO());
+    return QString::fromStdString("");
 }
 
 void TwitterakBackend::addKeywordToUserHistory(string word)
@@ -1018,7 +1019,6 @@ void TwitterakBackend::follow(QString id)
     tempUser->followed(user->get_id());
     saveUserInfo(0);
     saveUserInfo(1);
-    qDebug() << "temp followers : " << tempUser->get_followers().size() << " followings" << tempUser->get_followings().size();
 }
 
 void TwitterakBackend::unfollow(QString id)
@@ -1067,4 +1067,38 @@ bool TwitterakBackend::loadFollowings(QObject* followingsModel)
     }
 
     return 1;
+}
+
+void TwitterakBackend::deleteUser()
+{
+    //remove from userkeys.txt
+    ifstream file ("userkeys.txt");
+    if(file)
+    {
+        ofstream out("userkeys_temp.txt");
+        while(!file.eof())
+        {
+            string r_id , r_username, r_password;
+            file >> r_id >> r_username >> r_password;
+            if(r_id.empty())
+                continue;
+            if(r_id != user->get_id())
+            {
+                out << r_id << " " << r_username << " " << r_password << '\n';
+            }
+        }
+        out.close();
+    }
+    file.close();
+    rename("userkeys_temp.txt","userkeys.txt");
+
+    //remove from users
+    const char* deleteUserCommand = ("users/" + user->get_id() + ".txt").c_str();
+    remove(deleteUserCommand);
+    const char* deleteHistoryCommand = ("users/" + user->get_id() + "_history.txt").c_str();
+    remove(deleteHistoryCommand);
+    const char* deleteTweetsCommand = ("rm -r tweets/" + user->get_id()).c_str();
+    system(deleteTweetsCommand);
+
+    logout();
 }
