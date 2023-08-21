@@ -72,7 +72,21 @@ public slots:
 
     //set secondary info contains "name" "phone" "country" "date of birth" "bio" "link" "office/Ceo"(custom)
     //this func is called when user fills second register form or when user edits his/her profile
-    bool setSecondaryInfo(int type, QObject* name, QObject* phone,QObject* county,QObject* year,QObject* month,QObject* day,QObject* bio,QObject* link, QObject* custom,QObject* warn , QString profile, QString header);
+    bool setSecondaryInfo(
+        int type, 
+        QObject* name,
+        QObject* phone,
+        QObject* county,
+        QObject* year,
+        QObject* month,
+        QObject* day,
+        QObject* bio,
+        QObject* link,
+        QObject* custom,
+        QObject* warn ,
+        QString profile,
+        QString header
+    );
 
     //create an ID for user
     //save ID , username and password in userkeys.txt

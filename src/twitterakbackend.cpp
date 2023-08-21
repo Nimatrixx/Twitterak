@@ -327,63 +327,57 @@ bool TwitterakBackend::setSecondaryInfo(int type, QObject* name, QObject* phone,
     user->set_header(header.toStdString());
 
     //custom
-    string customUsername;
-    if(type == 1 )
+    if(type != 0)
     {
+        string customUsername;
         customUsername = custom->property("text").toString().toStdString();
-    }
-    else if(type == 2)
-    {
-        customUsername = custom->property("text").toString().toStdString();
-    }
-
-    if(type != 0 && customUsername.empty() == 0)
-    {
-
-        //check validation of entered username
-        bool found{0};
-        ifstream file ("userkeys.txt", ios::out);
-        if(file)
+        if(customUsername.empty() == 0)
         {
-            while(!file.eof())
+             //check validation of entered username
+            bool found{0};
+            ifstream file ("userkeys.txt", ios::out);
+            if(file)
             {
-                string r_id , r_username, r_password;
-                file >> r_id >> r_username >> r_password;
-                if(r_username == customUsername)
+                while(!file.eof())
                 {
-                    char lastCh = r_id[r_id.length() - 1];
-                    if(type == 1)
+                    string r_id , r_username, r_password;
+                    file >> r_id >> r_username >> r_password;
+                    if(r_username == customUsername)
                     {
-                        if(lastCh == 'o')
+                        char lastCh = r_id[r_id.length() - 1];
+                        if(type == 1)
                         {
-                            p_user.set_office(customUsername);
-                            found = 1;
+                            if(lastCh == 'o')
+                            {
+                                p_user.set_office(customUsername);
+                                found = 1;
+                            }
                         }
-                    }
-                    else if(type == 2)
-                    {
-                        if(lastCh == 'p')
+                        else if(type == 2)
                         {
-                            o_user.set_CEO(customUsername);
-                            found = 1;
+                            if(lastCh == 'p')
+                            {
+                                o_user.set_CEO(customUsername);
+                                found = 1;
+                            }
                         }
+                        break;
                     }
-                    break;
                 }
             }
-        }
-        file.close();
+            file.close();
 
-        if(found == 0)
-        {
-            successfullyPassed = 0;
-            QVariant qv;
-            if(type == 1)
-                qv = QString("* office username is not valid");
-            else
-                qv = QString("* ceo username is not valid");
-            warn->setProperty("text", qv);
-            warn->setProperty("visible", true);
+            if(found == 0)
+            {
+                successfullyPassed = 0;
+                QVariant qv;
+                if(type == 1)
+                    qv = QString("* office username is not valid");
+                else
+                    qv = QString("* ceo username is not valid");
+                warn->setProperty("text", qv);
+                warn->setProperty("visible", true);
+            }
         }
     }
 
@@ -760,7 +754,6 @@ void TwitterakBackend::updateUserKey()
         ofstream out("userkeys_temp.txt");
         while(!file.eof())
         {
-            qDebug() << "read key";
             string r_id , r_username, r_password;
             file >> r_id >> r_username >> r_password;
             if(r_id.empty())
