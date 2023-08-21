@@ -937,7 +937,7 @@ Item {
 
                 TextButton{
                     anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.horizontalCenterOffset: 150
+                    anchors.horizontalCenterOffset: 170
                     anchors.bottom: parent.bottom
                     anchors.bottomMargin: 30
                     label: "Delete User"
