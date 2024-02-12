@@ -7,8 +7,8 @@ this software is built using:
 * c++ for backend
 * qml for frontend
 <p  float="left"> 
-  <img src="https://github.com/Nimatrixx/Twitterak/blob/main/img/ui_login.png" width="500" height="auto"/>
-  <img src="https://github.com/Nimatrixx/Twitterak/blob/main/img/ui_profile.png" width="500" height="auto"/>
+  <img src="https://github.com/Nimatrixx/Twitterak/blob/main/img/ui_login.png" width="400" height="auto"/>
+  <img src="https://github.com/Nimatrixx/Twitterak/blob/main/img/ui_profile.png" width="400" height="auto"/>
 </p>
 
 ## License
