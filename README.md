@@ -1,8 +1,8 @@
 # Twitterak
-useless. Just an academic programming project and an old experience of working with [Qt](www.qt.io).
+useless. Just an academic programming project and an old experience of working with [Qt](https://www.qt.io).
 
 ## What's Twitterak?
-a simple clone of [twitter](www.twitter.com). users can create three types of accounts with different privacy, they can post, like posts, edit and delete them.
+a simple clone of [twitter](https://www.twitter.com). users can create three types of accounts with different privacy, they can post, like posts, edit and delete them.
 this software is built using:
 * c++ for backend
 * qml for frontend
